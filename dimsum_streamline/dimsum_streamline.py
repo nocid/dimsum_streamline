@@ -3,11 +3,6 @@
 It starts by uploading the necessary data as well as the dimsum config file to the server,
 then it runs dimsum remotely on the server and downloads the results to the local machine.
 
-It can also run the merging of the vsearch files between step 3 and 4 to merge different runs of the same sample if required by the user.
-
-It then runs the R dimsum analysis pipeline corresponding to the BB30K experiment to get the resulting clusters for the experiment.
-
-NOTE: The user needs to be connected to the server through a VPN to run the script.
 """
 
 #Import the necessary libraries
@@ -40,14 +35,6 @@ parser.add_argument("--scripts_local_path",type=str, help="Path of the scripts o
 parser.add_argument("--password", "-p", action="store_true", help="Prompt for server password")
 args = parser.parse_args()
 
-#Define the variables
-#data_path = args.wk_dir+"/data" #Path to the data on the local machine
-#server_path = args.server_path+":"+args.wk_dir_remote #Path to the server
-#config_file = args.config_file #Name of the dimsum config file localy 
-#scripts_local_path = args.scripts_local_path #Path to the scripts on the local machine
-#config_file_path = str(scripts_local_path+config_file)
-#conda_env_R = args.conda_env_R
-#conda_env_python = args.conda_env_python
 
 
 #Create a class called DimSum pipeline that contain all the parameters to run dimsum and from which the user can call the functions and get the results of the pipeline
@@ -174,7 +161,7 @@ class DimSumPipeline:
 
     def create_dimsum_config_file(self, config_args, barcode = bool):
         """
-        Creates a config file with customizable parameters for BB30_dim_script.sh using class attributes.
+        Creates a config file with customizable parameters forscript.sh using class attributes.
         The config file will be saved at self.config_file_path.
         If barcode is True, the barcode will be added to the config file.
         """
@@ -182,7 +169,7 @@ class DimSumPipeline:
             print("Creating DiMSum config file...")
             print("Setting up default configuration...")
             
-        # Default configuration matching BB30_dim_script.sh exactly
+        # Default configuration matching script.sh exactly
         default_config = {
             'fastqFileDir': self.fastqFileDir,
             'outputPath': self.outputPath,
@@ -210,11 +197,11 @@ class DimSumPipeline:
             'indels': "all",
             'maxSubstitutions': "129",
             'end': "5",
-            'error_output_path': f"/users/blehner/bbolognesi/Romain/dimsum_runs/errors_{self.projectName}",
-            'output_path': f"/users/blehner/bbolognesi/Romain/dimsum_runs/output_{self.projectName}",
+            'error_output_path': f"my_path/{self.projectName}",
+            'output_path': f"my_path/{self.projectName}",
             'ram_allocation': "70G",
             'time_max_job': "04:00:00",
-            'job_name': "dimsum_run"
+            'job_name': "run"
         }
         
         # Update defaults with any provided arguments from class attributes
@@ -369,7 +356,7 @@ DiMSum  --stopStage $end \\
 
     def upload_config_file_to_server_run_dimsum(self):
         """
-        This function uploads the dimsum config file to the server and runs dimsum using SLURM
+        This function uploads the dimsum config file to the server and runs dimsum using SLURM (or any other HPC job scheduler if you modify it)
         """
         
 
